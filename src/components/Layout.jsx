@@ -32,7 +32,7 @@ export default function Layout(props) {
     const footer = 
     (<footer>
         <p>
-            <span className="text-gradient">Caffiend</span> was made by <a href=''>Eriberto</a> <br></br> using the FantaCSS design library. <br></br>Check out the project on <a href="www.google.com" target='_blank'>Github</a>!
+            <span className="text-gradient">Caffiend</span> was made by <a href=''>Eriberto</a> <br></br> using the FantaCSS design library. <br></br>Check out the project on <a href="https://github.com/ENurce26/caffiend" target='_blank'>Github</a>!
         </p>
     </footer>)
 
