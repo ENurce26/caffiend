@@ -1,0 +1,208 @@
+{
+  "info": {
+    "_postman_id": "ae3d7d63-a192-4b0a-9e77-e07b01f556e8",
+    "name": "Caffiend QA Suite",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "48795599",
+    "_collection_link": "https://go.postman.co/collection/48795599-ae3d7d63-a192-4b0a-9e77-e07b01f556e8?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Unauthenticated Read (Security Rule Test)",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Authenticated Read",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Add a valid drink",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Valid drink entry returns 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response contains document name\", function () {",
+              "    const json = pm.response.json();",
+              "    pm.expect(json).to.have.property(\"name\");",
+              "});",
+              "",
+              "// Save the new document ID for cleanup",
+              "const docName = pm.response.json().name;",
+              "pm.environment.set(\"last_drink_id\", docName.split(\"/\").pop());"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{id_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/users/{{user_id}}/drinks",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users",
+            "{{user_id}}",
+            "drinks"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Add drink with missing required field",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Missing caffeine field is handled\", function () {",
+              "    console.log(\"Response status: \" + pm.response.code);",
+              "    console.log(\"Response body: \" + pm.response.text());",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 400]);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{id_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"fields\": {\n    \"name\": { \"stringValue\": \"Mystery Drink\" },\n    \"timestamp\": { \"stringValue\": \"2026-04-09T14:00:00Z\" }\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/users/{{user_id}}/drinks",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users",
+            "{{user_id}}",
+            "drinks"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Cross User Access Attempt",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/users/DIFFERENT_USER_ID/drinks",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users",
+            "DIFFERENT_USER_ID",
+            "drinks"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Test Drink",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Test drink deleted successfully\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{id_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/users/{{user_id}}/drinks/{{last_drink_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users",
+            "{{user_id}}",
+            "drinks",
+            "{{last_drink_id}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
